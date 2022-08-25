@@ -4,7 +4,7 @@ from .databases import DatabasesCRUDRouter
 from .gino_starlette import GinoCRUDRouter
 from .mem import MemoryCRUDRouter
 from .ormar import OrmarCRUDRouter
-from .sqlalchemy import SQLAlchemyCRUDRouter
+from .sqlalchemy import SQLAlchemyCRUDRouter, SQLAlchemyAsyncCRUDRouter
 from .tortoise import TortoiseCRUDRouter
 
 __all__ = [
@@ -13,6 +13,7 @@ __all__ = [
     "NOT_FOUND",
     "MemoryCRUDRouter",
     "SQLAlchemyCRUDRouter",
+    "SQLAlchemyAsyncCRUDRouter",
     "DatabasesCRUDRouter",
     "TortoiseCRUDRouter",
     "OrmarCRUDRouter",
