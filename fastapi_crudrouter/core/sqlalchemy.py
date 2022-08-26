@@ -166,7 +166,7 @@ class SQLAlchemyCRUDRouter(CRUDGenerator[SCHEMA]):
         return route
 
 
-class SQLAlchemyAsyncCRUDRouter(SQLAlchemyCRUDRouter[SCHEMA]):
+class SQLAlchemyAsyncCRUDRouter(SQLAlchemyCRUDRouter, CRUDGenerator[SCHEMA]):
     def _get_all(self, *args: Any, **kwargs: Any) -> CALLABLE_LIST:
         async def route(
             db: AsyncSession = Depends(self.db_func),
