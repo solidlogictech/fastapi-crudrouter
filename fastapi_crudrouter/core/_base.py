@@ -32,7 +32,6 @@ class CRUDGenerator(Generic[T], APIRouter, ABC):
         delete_all_route: Union[bool, DEPENDENCIES] = True,
         **kwargs: Any,
     ) -> None:
-
         self.schema = schema
         self.pagination = pagination_factory(max_limit=paginate)
         self._pk: str = self._pk if hasattr(self, "_pk") else "id"

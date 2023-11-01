@@ -25,8 +25,8 @@ else:
     Session = Callable[..., Generator[Session, Any, None]]
     AsyncSession = Callable[..., Generator[AsyncSession, Any, None]]
 
-CALLABLE = Callable[..., Model] | Callable[..., Awaitable[Model]]
-CALLABLE_LIST = Callable[..., List[Model]] | Callable[..., Awaitable[List[Model]]]
+CALLABLE = Union[Callable[..., Model], Callable[..., Awaitable[Model]]]
+CALLABLE_LIST = Union[Callable[..., List[Model]], Callable[..., Awaitable[List[Model]]]]
 
 
 class SQLAlchemyCRUDRouter(CRUDGenerator[SCHEMA]):
@@ -189,8 +189,7 @@ class SQLAlchemyAsyncCRUDRouter(SQLAlchemyCRUDRouter, CRUDGenerator[SCHEMA]):
             item_id: self._pk_type, db: AsyncSession = Depends(self.db_func)  # type: ignore
         ) -> Model:
             res = await db.execute(
-                select(self.db_model)
-                .where(getattr(self.db_model, self._pk) == item_id)
+                select(self.db_model).where(getattr(self.db_model, self._pk) == item_id)
             )
             model: Model = res.scalar()
 
