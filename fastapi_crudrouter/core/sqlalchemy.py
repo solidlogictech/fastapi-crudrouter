@@ -25,8 +25,8 @@ else:
     Session = Callable[..., Generator[Session, Any, None]]
     AsyncSession = Callable[..., Generator[AsyncSession, Any, None]]
 
-CALLABLE = Callable[..., Model] | Callable[..., Awaitable[Model]]
-CALLABLE_LIST = Callable[..., List[Model]] | Callable[..., Awaitable[List[Model]]]
+CALLABLE = Callable[..., Union[Model, Awaitable[Model]]]
+CALLABLE_LIST = Callable[..., Union[List[Model], Awaitable[List[Model]]]]
 
 
 class SQLAlchemyCRUDRouter(CRUDGenerator[SCHEMA]):
@@ -145,7 +145,9 @@ class SQLAlchemyCRUDRouter(CRUDGenerator[SCHEMA]):
         return route
 
     def _delete_all(self, *args: Any, **kwargs: Any) -> CALLABLE_LIST:
-        def route(db: Session = Depends(self.db_func)) -> List[Model]:
+        def route(
+            db: Session = Depends(self.db_func),
+        ) -> Union[List[Any], Awaitable[List[Any]]]:
             db.query(self.db_model).delete()
             db.commit()
 
@@ -189,15 +191,13 @@ class SQLAlchemyAsyncCRUDRouter(SQLAlchemyCRUDRouter, CRUDGenerator[SCHEMA]):
             item_id: self._pk_type, db: AsyncSession = Depends(self.db_func)  # type: ignore
         ) -> Model:
             res = await db.execute(
-                select(self.db_model)
-                .where(getattr(self.db_model, self._pk) == item_id)
+                select(self.db_model).where(getattr(self.db_model, self._pk) == item_id)
             )
             model: Model = res.scalar()
 
             if model:
                 return model
-            else:
-                raise NOT_FOUND from None
+            raise NOT_FOUND from None
 
         return route
 
@@ -242,11 +242,13 @@ class SQLAlchemyAsyncCRUDRouter(SQLAlchemyCRUDRouter, CRUDGenerator[SCHEMA]):
         return route
 
     def _delete_all(self, *args: Any, **kwargs: Any) -> CALLABLE_LIST:
-        async def route(db: AsyncSession = Depends(self.db_func)) -> List[Model]:
+        async def route(
+            db: AsyncSession = Depends(self.db_func),
+        ) -> Union[Model, List[Model]]:
             await db.execute(delete(self.db_model))
             await db.commit()
 
-            return await self._get_all()(db=db, pagination={"skip": 0, "limit": None})
+            return await self._get_all()(db=db, pagination={"skip": 0, "limit": None})  # type: ignore
 
         return route
 
