@@ -6,7 +6,7 @@ ormar
 tortoise-orm==0.18.1
 databases
 aiosqlite
-sqlalchemy<1.4.44
+sqlalchemy<1.4.0
 sqlalchemy_utils==0.36.8
 gino-starlette==0.1.1
 asyncpg
@@ -16,7 +16,7 @@ pytest
 pytest-virtualenv
 requests
 asynctest
-psycopg2
+psycopg2-binary
 pyodbc
 
 # Linting
