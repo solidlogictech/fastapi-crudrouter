@@ -145,7 +145,9 @@ class SQLAlchemyCRUDRouter(CRUDGenerator[SCHEMA]):
         return route
 
     def _delete_all(self, *args: Any, **kwargs: Any) -> CALLABLE_LIST:
-        def route(db: Session = Depends(self.db_func)) -> Union[List[Any], Awaitable[List[Any]]]:
+        def route(
+            db: Session = Depends(self.db_func)
+        ) -> Union[List[Any], Awaitable[List[Any]]]:
             db.query(self.db_model).delete()
             db.commit()
 
@@ -189,8 +191,7 @@ class SQLAlchemyAsyncCRUDRouter(SQLAlchemyCRUDRouter, CRUDGenerator[SCHEMA]):
             item_id: self._pk_type, db: AsyncSession = Depends(self.db_func)  # type: ignore
         ) -> Model:
             res = await db.execute(
-                select(self.db_model)
-                .where(getattr(self.db_model, self._pk) == item_id)
+                select(self.db_model).where(getattr(self.db_model, self._pk) == item_id)
             )
             model: Model = res.scalar()
 
@@ -241,7 +242,9 @@ class SQLAlchemyAsyncCRUDRouter(SQLAlchemyCRUDRouter, CRUDGenerator[SCHEMA]):
         return route
 
     def _delete_all(self, *args: Any, **kwargs: Any) -> CALLABLE_LIST:
-        async def route(db: AsyncSession = Depends(self.db_func)) -> Union[Model, List[Model]]:
+        async def route(
+            db: AsyncSession = Depends(self.db_func)
+        ) -> Union[Model, List[Model]]:
             await db.execute(delete(self.db_model))
             await db.commit()
 
